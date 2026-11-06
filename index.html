@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Shus – The all-in-one Discord bot with attitude</title>
+<meta name="description" content="Shus is a sarcastic AI Discord bot with moderation, auto-mod, levels, giveaways, tickets and more. 36 commands, zero patience.">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Space+Grotesk:wght@500;700&display=swap">
+<style>
+:root{
+  --bg:#FFF7FA;--card:#FFFFFF;--border:#F0D9E3;--text:#1D1A1C;--muted:#5E5560;
+  --accent:#C2316C;--on-accent:#FFFFFF;--inv-bg:#FFFFFF;--inv-text:#C2316C;--line:#E2B9CB;--soft:#FCEAF2;
+  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#0E1014;--card:#171A21;--border:#262B36;--text:#E8EAF0;--muted:#A9AFBF;
+    --accent:#F78FB8;--on-accent:#0E1014;--inv-bg:#0E1014;--inv-text:#FFFFFF;--line:#3A4050;--soft:#1E1721;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#0E1014;--card:#171A21;--border:#262B36;--text:#E8EAF0;--muted:#A9AFBF;
+  --accent:#F78FB8;--on-accent:#0E1014;--inv-bg:#0E1014;--inv-text:#FFFFFF;--line:#3A4050;--soft:#1E1721;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,sans-serif;line-height:1.6}
+a{color:var(--text);text-decoration:none}
+button{font:inherit;cursor:pointer}
+h1,h2,h3,.logo,code,.num,.stat b{font-family:'Space Grotesk',system-ui,sans-serif}
+.wrap{max-width:1120px;margin:0 auto;padding:0 24px}
+.nav{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;padding-top:24px;padding-bottom:24px}
+.logo{font-size:28px;font-weight:700;color:var(--accent)}
+.nav nav{display:flex;gap:24px;flex-wrap:wrap}
+.nav nav a{display:inline-flex;align-items:center;min-height:44px}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 22px;border-radius:10px;font-weight:500;border:0}
+.btn-lg{padding:0 28px;font-size:17px;min-height:52px}
+.btn-pink{background:var(--accent);color:var(--on-accent)}
+.btn-pink:hover{filter:brightness(1.08)}
+.btn-outline{border:1px solid var(--line);background:transparent;color:var(--text)}
+.btn-outline:hover{border-color:var(--accent)}
+.btn-inv{background:var(--inv-bg);color:var(--inv-text)}
+.hero{padding-top:72px;padding-bottom:40px;display:flex;flex-direction:column;align-items:flex-start;gap:28px}
+.label{margin:0;font-size:15px;color:var(--accent);letter-spacing:.08em;text-transform:uppercase}
+h1{margin:0;font-size:76px;line-height:1.02;font-weight:700;max-width:900px}
+h1 em{font-style:normal;color:var(--accent)}
+.lead{margin:0;font-size:20px;color:var(--muted);max-width:660px}
+.actions{display:flex;gap:16px;flex-wrap:wrap}
+.stats{display:flex;gap:40px;flex-wrap:wrap;padding-top:16px}
+.stat b{display:block;font-size:36px;color:var(--accent);line-height:1.1}
+.stat span{color:var(--muted);font-size:15px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px}
+.block{padding-top:88px}
+h2{margin:0 0 12px;font-size:40px;line-height:1.15}
+.sub{margin:0 0 32px;color:var(--muted);font-size:18px;max-width:640px}
+h3{margin:0 0 8px;font-size:22px;font-weight:500}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.grid.two{grid-template-columns:repeat(2,1fr)}
+.card p{margin:0;color:var(--muted)}
+.num{display:block;font-size:20px;color:var(--accent);margin-bottom:12px}
+.tag{display:inline-block;font-size:13px;color:var(--accent);border:1px solid var(--line);border-radius:999px;padding:2px 10px;margin-bottom:12px}
+
+.demo{display:grid;grid-template-columns:1fr 1.3fr;gap:24px;align-items:start}
+.chips{display:flex;flex-direction:column;gap:10px}
+.chip{text-align:left;background:var(--card);color:var(--text);border:1px solid var(--border);border-radius:12px;padding:12px 16px;min-height:44px}
+.chip:hover,.chip[aria-pressed="true"]{border-color:var(--accent)}
+.chat{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px;min-height:300px;display:flex;flex-direction:column;gap:18px}
+.msg .who{font-size:14px;color:var(--muted)}
+.msg .who.pink{color:var(--accent)}
+.msg p{margin:2px 0 0;font-size:17px}
+.hint,.typing{margin:0;color:var(--muted)}
+
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+.tab{background:transparent;color:var(--text);border:1px solid var(--line);border-radius:999px;padding:0 18px;min-height:44px}
+.tab[aria-pressed="true"]{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
+.list{border:1px solid var(--border);border-radius:16px;overflow:hidden}
+.row{display:flex;gap:24px;flex-wrap:wrap;padding:16px 28px;background:var(--card);border-bottom:1px solid var(--border)}
+.row:last-child{border-bottom:0}
+.row code{flex:0 0 160px;font-size:18px;color:var(--accent)}
+.row p{margin:0;flex:1 1 260px;color:var(--muted)}
+.limits ul{margin:12px 0 0;padding-left:20px;color:var(--muted)}
+.limits li{margin-bottom:8px}
+.soft{background:var(--soft)}
+.banner{margin-top:88px;padding:64px 32px;background:var(--accent);color:var(--on-accent);border-radius:24px;display:flex;flex-direction:column;align-items:flex-start;gap:20px}
+.banner h2{margin:0;font-weight:700;font-size:48px}
+.banner p{margin:0;max-width:520px}
+.foot{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;padding-top:80px;padding-bottom:48px;font-size:15px;color:var(--muted)}
+@media (max-width:800px){
+  h1{font-size:46px}h2{font-size:32px}.banner h2{font-size:36px}.hero{padding-top:48px}
+  .grid,.grid.two,.demo{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<header class="wrap nav">
+  <a class="logo" href="#top">shus</a>
+  <nav aria-label="Main"><a href="#features">Features</a><a href="#commands">Commands</a><a href="#try">Demo</a><a href="#faq">FAQ</a></nav>
+  <a class="btn btn-pink" href="#invite">Add to Discord</a>
+</header>
+
+<main id="top">
+  <section class="wrap hero">
+    <p class="label">All-in-one Discord bot. Sarcastic. Regrettably helpful.</p>
+    <h1>One bot for your whole server. <em>With attitude.</em></h1>
+    <p class="lead">Shus moderates, levels up your members, runs giveaways and tickets, and chats like a tired genius. It insults your takes, never your people, and still gets the answer right.</p>
+    <div class="actions">
+      <a class="btn btn-pink btn-lg" href="#invite">Add Shus to your server</a>
+      <a class="btn btn-outline btn-lg" href="#commands">Browse all commands</a>
+    </div>
+    <div class="stats">
+      <div class="stat"><b>36</b><span>slash commands</span></div>
+      <div class="stat"><b>5</b><span>auto-mod filters</span></div>
+      <div class="stat"><b>AI</b><span>chat in every channel you pick</span></div>
+    </div>
+  </section>
+
+  <section class="wrap block" id="features">
+    <h2>Everything your server needs</h2>
+    <p class="sub">Stop stacking five bots. Shus covers the basics and brings its own personality.</p>
+    <div class="grid">
+      <article class="card"><span class="tag">AI</span><h3>Chat that talks back</h3><p>Mention it, DM it or set an AI channel. Summarize a chat with /tldr or translate with /translate.</p></article>
+      <article class="card"><span class="tag">Moderation</span><h3>Real mod tools</h3><p>Ban, kick, timeout, warn, purge, slowmode and lock. Three warnings earns an automatic timeout.</p></article>
+      <article class="card"><span class="tag">Protection</span><h3>Auto-mod and anti-raid</h3><p>Filters for invites, links, caps, spam and blocked words. Kicks brand-new accounts and mass joins.</p></article>
+      <article class="card"><span class="tag">Logs</span><h3>Know what happened</h3><p>Deleted and edited messages, joins, leaves and every mod action go to your log channel.</p></article>
+      <article class="card"><span class="tag">Community</span><h3>Levels and rewards</h3><p>XP for chatting, /rank and /leaderboard, and roles handed out at the levels you choose.</p></article>
+      <article class="card"><span class="tag">Community</span><h3>Giveaways and tickets</h3><p>One-click giveaways with an Enter button, and private support tickets with a staff role.</p></article>
+      <article class="card"><span class="tag">Voice</span><h3>Personal voice channels</h3><p>Join the hub channel and Shus builds your own room. Rename, limit or lock it with /voice.</p></article>
+      <article class="card"><span class="tag">Setup</span><h3>Welcome and automation</h3><p>Welcome messages, autorole and auto-responders, all configured from one /config command.</p></article>
+      <article class="card"><span class="tag">Fun</span><h3>Games and roasts</h3><p>Tic-tac-toe, rock paper scissors, 8ball and a playful /roast that never gets personal.</p></article>
+    </div>
+  </section>
+
+  <section class="wrap block" id="try">
+    <h2>Try it. It’s a little rigged.</h2>
+    <p class="sub">Pick a message and see how Shus would reply in your server.</p>
+    <div class="demo">
+      <div class="chips" role="group" aria-label="Example messages">
+        <button class="chip" data-k="role" aria-pressed="false">How do I make a role?</button>
+        <button class="chip" data-k="pizza" aria-pressed="false">Is pineapple on pizza okay?</button>
+        <button class="chip" data-k="code" aria-pressed="false">my code doesn’t work</button>
+        <button class="chip" data-k="sad" aria-pressed="false">i’ve had a really rough day</button>
+      </div>
+      <div class="chat" id="chat" aria-live="polite"><p class="hint">Pick a message on the left. Shus is waiting. Unfortunately.</p></div>
+    </div>
+  </section>
+
+  <section class="wrap block" id="commands">
+    <h2>All commands</h2>
+    <p class="sub">Filter by category. Every command is a slash command.</p>
+    <div class="tabs" id="tabs" role="group" aria-label="Command categories"></div>
+    <div class="list" id="cmds"></div>
+  </section>
+
+  <section class="wrap block" id="how">
+    <h2>Set up in minutes</h2>
+    <div class="grid" style="margin-top:32px">
+      <article class="card"><span class="num">1</span><h3>Add it</h3><p>Invite Shus with one click.</p></article>
+      <article class="card"><span class="num">2</span><h3>Run /config</h3><p>Pick your log channel, filters, welcome message and levels. /config view shows it all.</p></article>
+      <article class="card"><span class="num">3</span><h3>Enjoy the commentary</h3><p>Your server runs itself. Shus complains about it the whole time.</p></article>
+    </div>
+  </section>
+
+  <section class="wrap block" id="limits">
+    <div class="card soft limits">
+      <h2 style="margin-bottom:0">Toxic, but with a conscience</h2>
+      <ul>
+        <li>Roasts aim at choices, takes and typos. Never race, gender, sexuality, religion, disability, body or family.</li>
+        <li>No bullying, threats or pile-ons, even if someone dares it.</li>
+        <li>If you say stop, the bit stops. Serious moments get a sincere reply.</li>
+        <li>Shus is always honest about being an AI.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="wrap block" id="faq">
+    <h2>FAQ</h2>
+    <div class="grid two" style="margin-top:32px">
+      <div class="card"><h3>Will it reply to every message?</h3><p>No. Shus answers when you mention it, DM it, use a slash command, or in channels you set as AI channels.</p></div>
+      <div class="card"><h3>Does it remember conversations?</h3><p>It keeps the last 12 messages per channel. /reset clears them.</p></div>
+      <div class="card"><h3>Can I turn off the features I don’t need?</h3><p>Yes. Filters, anti-raid, levels, welcome messages and AI channels are all optional and off until you enable them.</p></div>
+      <div class="card"><h3>[YOUR QUESTION]</h3><p>[YOUR ANSWER]</p></div>
+    </div>
+  </section>
+
+  <section class="wrap">
+    <div class="banner" id="invite">
+      <h2>Fine. Let it in.</h2>
+      <p>Add Shus to your server and find out how much you can take.</p>
+      <a class="btn btn-inv btn-lg" href="#invite">Add to Discord</a>
+    </div>
+  </section>
+</main>
+<footer class="wrap foot"><span>shus</span><span>[YOUR FOOTER LINKS]</span></footer>
+
+<script>
+(function(){
+  var data={
+    role:{q:"How do I make a role?",a:"bold of you to ask a bot instead of the settings page. server settings > roles > create role, then drag it where you want it in the list. it’s not that deep. you’ve got this, champ."},
+    pizza:{q:"Is pineapple on pizza okay?",a:"it’s your pizza and your crimes. pineapple is fine. the real offense is how long you spent asking me about it."},
+    code:{q:"my code doesn’t work",a:"ah yes, the classic bug report. very detailed. paste the code and the error message and i’ll fix it, and judge it quietly while i do."},
+    sad:{q:"i’ve had a really rough day",a:"hey, no jokes. i’m sorry today was rough. want to tell me what happened? i’m listening, and talking to someone you trust helps too."}
+  };
+  var chat=document.getElementById('chat'),chips=document.querySelectorAll('.chip'),timer=null;
+  function msg(who,text,pink){
+    var d=document.createElement('div');d.className='msg';
+    var w=document.createElement('span');w.className='who'+(pink?' pink':'');w.textContent=who;
+    var p=document.createElement('p');p.textContent=text;
+    d.appendChild(w);d.appendChild(p);chat.appendChild(d);return p;
+  }
+  chips.forEach(function(c){
+    c.addEventListener('click',function(){
+      var item=data[c.getAttribute('data-k')];if(!item)return;
+      chips.forEach(function(x){x.setAttribute('aria-pressed',x===c?'true':'false');});
+      clearTimeout(timer);chat.textContent='';
+      msg('you',item.q,false);
+      var t=msg('shus','typing...',true);t.className='typing';
+      timer=setTimeout(function(){t.className='';t.textContent=item.a;},900);
+    });
+  });
+
+  var C=[
+    ["AI","/ask","Ask Shus anything."],["AI","/reset","Make Shus forget this channel."],["AI","/tldr","Summarize the recent messages in a channel."],["AI","/translate","Translate text into any language."],
+    ["Moderation","/ban","Ban a user."],["Moderation","/unban","Unban a user by ID."],["Moderation","/kick","Kick a user."],["Moderation","/timeout","Timeout a user for a set time."],["Moderation","/untimeout","Remove a timeout."],
+    ["Moderation","/warn","Warn a user. Three warnings means a 1 hour timeout."],["Moderation","/warnings","Show a user’s warnings."],["Moderation","/clearwarns","Clear a user’s warnings."],
+    ["Moderation","/purge","Bulk delete messages, optionally from one user."],["Moderation","/slowmode","Set channel slowmode."],["Moderation","/lock","Lock a channel for everyone."],["Moderation","/unlock","Unlock a channel."],
+    ["Community","/rank","Show your level and XP."],["Community","/leaderboard","Top 10 chatters."],["Community","/giveaway","Start or end a giveaway."],["Community","/ticket","Post a support ticket panel."],
+    ["Community","/voice","Rename, limit, lock or unlock your personal voice channel."],["Community","/poll","Create a poll with up to 9 options."],
+    ["Utility","/userinfo","Info about a user."],["Utility","/serverinfo","Info about the server."],["Utility","/avatar","Show someone’s avatar."],["Utility","/snipe","Show the last deleted message."],
+    ["Utility","/remind","Set a reminder."],["Utility","/ping","Check that Shus is alive."],["Utility","/help","See everything Shus can do."],
+    ["Fun","/roast","A playful roast of someone."],["Fun","/8ball","Ask the magic 8ball."],["Fun","/rps","Rock paper scissors against Shus."],["Fun","/coinflip","Flip a coin."],["Fun","/choose","Let Shus pick for you."],["Fun","/tictactoe","Challenge someone to tic-tac-toe."],
+    ["Setup","/config","Logs, welcome, autorole, filters, anti-raid, levels, autoresponders, AI channels, voicemaster and ticket staff."]
+  ];
+  var cats=["All","AI","Moderation","Community","Utility","Fun","Setup"],tabs=document.getElementById('tabs'),list=document.getElementById('cmds');
+  function render(cat){
+    list.textContent='';
+    C.filter(function(c){return cat==="All"||c[0]===cat;}).forEach(function(c){
+      var r=document.createElement('div');r.className='row';
+      var code=document.createElement('code');code.textContent=c[1];
+      var p=document.createElement('p');p.textContent=c[2];
+      r.appendChild(code);r.appendChild(p);list.appendChild(r);
+    });
+    Array.prototype.forEach.call(tabs.children,function(b){b.setAttribute('aria-pressed',b.textContent===cat?'true':'false');});
+  }
+  cats.forEach(function(c){
+    var b=document.createElement('button');b.className='tab';b.textContent=c;
+    b.addEventListener('click',function(){render(c);});
+    tabs.appendChild(b);
+  });
+  render("All");
+})();
+</script>
+</body>
+</html>
