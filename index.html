@@ -4,167 +4,250 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Shus – The all-in-one Discord bot</title>
-<meta name="description" content="Shus is a Discord bot for moderation, auto-mod, logging, levels, giveaways and music. Choose your own prefix, or use slash commands.">
+<meta name="description" content="Shus is a Discord bot for moderation, auto-mod, jail, levels, giveaways, booster roles and music. Pick your own prefix, or use slash commands.">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Space+Grotesk:wght@500;700&display=swap">
+<script>document.documentElement.classList.add('js')</script>
 <style>
 :root{
   --bg:#FFF7FA;--card:#FFFFFF;--border:#F0D9E3;--text:#1D1A1C;--muted:#5E5560;
-  --accent:#C2316C;--on-accent:#FFFFFF;--soft:#FCEAF2;--line:#E2B9CB;--inv-bg:#FFFFFF;--inv-text:#C2316C;
+  --accent:#C2316C;--on-accent:#FFFFFF;--soft:#FCEAF2;--line:#E2B9CB;--inv-bg:#FFFFFF;--inv-text:#C2316C;--ok:#1E8E4E;
   box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
     color-scheme:dark;
     --bg:#0E1014;--card:#171A21;--border:#262B36;--text:#E8EAF0;--muted:#A9AFBF;
-    --accent:#F78FB8;--on-accent:#0E1014;--soft:#1E1721;--line:#3A4050;--inv-bg:#0E1014;--inv-text:#FFFFFF;
+    --accent:#F78FB8;--on-accent:#0E1014;--soft:#1E1721;--line:#3A4050;--inv-bg:#0E1014;--inv-text:#FFFFFF;--ok:#5DD39A;
   }
 }
 :root[data-theme="dark"]{
   color-scheme:dark;
   --bg:#0E1014;--card:#171A21;--border:#262B36;--text:#E8EAF0;--muted:#A9AFBF;
-  --accent:#F78FB8;--on-accent:#0E1014;--soft:#1E1721;--line:#3A4050;--inv-bg:#0E1014;--inv-text:#FFFFFF;
+  --accent:#F78FB8;--on-accent:#0E1014;--soft:#1E1721;--line:#3A4050;--inv-bg:#0E1014;--inv-text:#FFFFFF;--ok:#5DD39A;
 }
 *{box-sizing:border-box}
-html{scroll-behavior:smooth;scroll-padding-top:env(safe-area-inset-top,0px)}
+html{scroll-behavior:smooth;scroll-padding-top:calc(76px + env(safe-area-inset-top,0px))}
 body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,sans-serif;line-height:1.6}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--bg)}
 a{color:var(--text);text-decoration:none}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer}
 h1,h2,h3,.logo,code,.num,.big{font-family:'Space Grotesk',system-ui,sans-serif}
 .wrap{max-width:1120px;margin:0 auto;padding:0 24px}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 
-.nav{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;padding-top:24px;padding-bottom:24px}
+/* sticky header */
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--bg);border-bottom:1px solid var(--border)}
+.nav{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:68px;flex-wrap:wrap;padding-top:8px;padding-bottom:8px}
 .logo{font-size:28px;font-weight:700;color:var(--accent)}
-.nav nav{display:flex;gap:24px;flex-wrap:wrap}
-.nav nav a{display:inline-flex;align-items:center;min-height:44px}
-.btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 22px;border-radius:12px;font-weight:500}
+.nav nav{display:flex;gap:6px;flex-wrap:wrap}
+.nav nav a{display:inline-flex;align-items:center;min-height:44px;padding:0 12px;border-radius:10px;color:var(--muted)}
+.nav nav a:hover,.nav nav a.on{color:var(--text);background:var(--soft)}
+.tools{display:flex;gap:10px;align-items:center}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 22px;border-radius:12px;font-weight:500;border:0}
 .btn-lg{padding:0 28px;font-size:17px;min-height:52px}
 .btn-pink{background:var(--accent);color:var(--on-accent)}
 .btn-pink:hover{filter:brightness(1.08)}
-.btn-outline{border:1px solid var(--line)}
+.btn-outline{border:1px solid var(--line);background:transparent}
 .btn-outline:hover{border-color:var(--accent)}
 .btn-inv{background:var(--inv-bg);color:var(--inv-text)}
+.icon-btn{min-width:44px;min-height:44px;border:1px solid var(--line);background:transparent;border-radius:12px}
+.icon-btn:hover{border-color:var(--accent)}
 
-.hero{display:flex;gap:56px;align-items:center;flex-wrap:wrap;padding-top:64px;padding-bottom:40px}
-.hero-text{flex:1 1 440px;display:flex;flex-direction:column;align-items:flex-start;gap:24px}
+/* hero */
+.hero{display:flex;gap:48px;align-items:flex-start;flex-wrap:wrap;padding-top:56px;padding-bottom:24px}
+.hero-text{flex:1 1 420px;display:flex;flex-direction:column;align-items:flex-start;gap:22px}
 .label{margin:0;font-size:15px;color:var(--accent);letter-spacing:.08em;text-transform:uppercase}
-h1{margin:0;font-size:68px;line-height:1.04;font-weight:700}
+h1{margin:0;font-size:64px;line-height:1.04;font-weight:700}
 h1 em{font-style:normal;color:var(--accent)}
 .lead{margin:0;font-size:20px;color:var(--muted);max-width:560px}
 .actions{display:flex;gap:16px;flex-wrap:wrap}
-.facts{display:flex;gap:28px;flex-wrap:wrap;color:var(--muted);font-size:15px}
-.facts b{color:var(--text);font-weight:500}
+.stats{display:flex;gap:36px;flex-wrap:wrap;padding-top:4px}
+.stat b{display:block;font-size:34px;color:var(--accent);line-height:1.1;font-family:'Space Grotesk',system-ui,sans-serif}
+.stat span{color:var(--muted);font-size:15px}
 
-.mock{flex:1 1 360px;max-width:460px;background:var(--card);border:1px solid var(--border);border-radius:20px;padding:24px;display:flex;flex-direction:column;gap:18px}
-.mock .who{font-size:14px;color:var(--muted)}
-.mock .who.pink{color:var(--accent)}
-.mock p{margin:2px 0 0;font-size:17px}
-.mock code{color:var(--accent)}
-.embed{border-left:4px solid var(--accent);background:var(--soft);border-radius:8px;padding:12px 16px;margin-top:6px}
-.embed b{display:block;margin-bottom:4px}
-.embed span{display:block;color:var(--muted);font-size:15px}
+/* prefix picker */
+.picker{display:flex;flex-direction:column;gap:10px;background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px 18px;width:100%;max-width:560px}
+.picker .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.picker strong{font-weight:500}
+.pbtn{min-width:44px;min-height:44px;padding:0 12px;border:1px solid var(--line);background:transparent;border-radius:10px;font-family:'Space Grotesk',system-ui,sans-serif;font-size:18px}
+.pbtn:hover{border-color:var(--accent)}
+.pbtn[aria-pressed="true"]{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
+.pin{width:88px;min-height:44px;padding:0 12px;border:1px solid var(--line);background:var(--bg);border-radius:10px;font-family:'Space Grotesk',system-ui,sans-serif;font-size:18px;text-align:center}
+.hint{color:var(--muted);font-size:14px;margin:0}
 
+/* chat window */
+.win{flex:1 1 380px;max-width:520px;background:var(--card);border:1px solid var(--border);border-radius:20px;overflow:hidden;display:flex;flex-direction:column}
+.win-head{padding:12px 18px;border-bottom:1px solid var(--border);color:var(--muted);font-size:14px;display:flex;justify-content:space-between;gap:8px}
+.log{padding:18px;display:flex;flex-direction:column;gap:14px;min-height:300px;max-height:380px;overflow-y:auto}
+.m .who{font-size:13px;color:var(--muted)}
+.m .who.bot{color:var(--accent)}
+.m p{margin:2px 0 0;font-size:16px;overflow-wrap:anywhere}
+.m code{color:var(--accent)}
+.emb{border-left:4px solid var(--accent);background:var(--soft);border-radius:8px;padding:10px 14px;margin-top:4px}
+.emb.bad{border-left-color:#E5484D}
+.emb b{display:block;margin-bottom:2px}
+.emb span{display:block;color:var(--muted);font-size:14.5px;overflow-wrap:anywhere}
+.typing{color:var(--muted);font-size:14px}
+.chips{display:flex;gap:8px;flex-wrap:wrap;padding:0 18px 12px}
+.chip{min-height:36px;padding:0 12px;border:1px solid var(--line);background:transparent;border-radius:999px;font-size:14px}
+.chip:hover{border-color:var(--accent)}
+.say{display:flex;gap:8px;padding:12px 18px 18px;border-top:1px solid var(--border)}
+.say input{flex:1;min-width:0;min-height:44px;padding:0 14px;border:1px solid var(--line);background:var(--bg);border-radius:12px}
+.say button{min-height:44px;padding:0 18px;border:0;border-radius:12px;background:var(--accent);color:var(--on-accent);font-weight:500}
+.sim{font-size:12.5px;color:var(--muted);padding:0 18px 14px;margin:0}
+
+/* sections */
 .block{padding-top:96px}
 h2{margin:0 0 12px;font-size:40px;line-height:1.15}
-.sub{margin:0 0 32px;color:var(--muted);font-size:18px;max-width:640px}
-h3{margin:0 0 8px;font-size:22px;font-weight:500}
+.sub{margin:0 0 32px;color:var(--muted);font-size:18px;max-width:660px}
+h3{margin:0 0 8px;font-size:21px;font-weight:500}
 .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
-.grid.two{grid-template-columns:repeat(2,1fr)}
-.card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:28px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:26px;transition:transform .2s,border-color .2s}
+.card:hover{transform:translateY(-3px);border-color:var(--accent)}
 .card p{margin:0;color:var(--muted)}
-.tag{display:inline-block;font-size:13px;color:var(--accent);border:1px solid var(--line);border-radius:999px;padding:2px 12px;margin-bottom:14px}
-.num{display:block;font-size:22px;color:var(--accent);margin-bottom:12px}
+.tag{display:inline-block;font-size:13px;color:var(--accent);border:1px solid var(--line);border-radius:999px;padding:2px 12px;margin-bottom:12px}
 
-.pills{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
-.pills code{font-size:14px;background:var(--soft);color:var(--accent);border:1px solid var(--border);border-radius:8px;padding:2px 10px}
-.cmd h3{margin-bottom:0}
-.cmd p{font-size:15px}
+/* explorer */
+.tools-row{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:16px}
+.search{flex:1 1 280px;min-height:48px;padding:0 16px;border:1px solid var(--line);background:var(--card);border-radius:12px}
+.count{color:var(--muted);font-size:15px}
+.cats{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+.cat{min-height:40px;padding:0 16px;border:1px solid var(--line);background:transparent;border-radius:999px}
+.cat:hover{border-color:var(--accent)}
+.cat[aria-pressed="true"]{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
+.list{border:1px solid var(--border);border-radius:16px;overflow:hidden;max-height:560px;overflow-y:auto;background:var(--card)}
+.crow{display:flex;gap:16px;align-items:center;flex-wrap:wrap;padding:12px 18px;border-bottom:1px solid var(--border)}
+.crow:last-child{border-bottom:0}
+.crow .nm{flex:0 0 250px;max-width:100%;color:var(--accent);font-size:16px;overflow-wrap:anywhere}
+.crow .ds{flex:1 1 240px;color:var(--muted);font-size:15px}
+.badge{font-size:12px;border:1px solid var(--line);border-radius:999px;padding:1px 9px;color:var(--muted);white-space:nowrap}
+.copy{min-height:36px;min-width:72px;padding:0 12px;border:1px solid var(--line);background:transparent;border-radius:10px;font-size:14px}
+.copy:hover{border-color:var(--accent)}
+.copy.done{border-color:var(--ok);color:var(--ok)}
+.empty{padding:28px;color:var(--muted);text-align:center}
+
+/* setup builder */
+.build{display:grid;grid-template-columns:1fr 1.2fr;gap:24px;align-items:start}
+.opts{display:flex;flex-direction:column;gap:10px}
+.opt{display:flex;gap:12px;align-items:flex-start;min-height:44px;padding:12px 14px;border:1px solid var(--border);background:var(--card);border-radius:14px;cursor:pointer}
+.opt:hover{border-color:var(--accent)}
+.opt input{width:20px;height:20px;margin-top:2px;accent-color:var(--accent);flex:none}
+.opt b{font-weight:500;display:block}
+.opt span{color:var(--muted);font-size:14.5px}
+.steps{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:22px;min-height:200px}
+.steps ol{margin:0;padding-left:0;list-style:none;display:flex;flex-direction:column;gap:10px}
+.steps li{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.steps li code{flex:1 1 220px;background:var(--soft);border:1px solid var(--border);border-radius:8px;padding:6px 10px;font-size:14.5px;overflow-wrap:anywhere}
+.steps h4{margin:0 0 10px;font-weight:500;font-size:16px}
+.steps .top{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:14px;flex-wrap:wrap}
 
 .banner{margin-top:96px;padding:64px 32px;background:var(--accent);color:var(--on-accent);border-radius:28px;display:flex;flex-direction:column;align-items:flex-start;gap:20px}
 .banner h2{margin:0;font-size:48px}
 .banner p{margin:0;max-width:520px}
 .foot{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;padding-top:72px;padding-bottom:48px;font-size:15px;color:var(--muted)}
 
-@media (max-width:800px){
-  h1{font-size:44px}h2{font-size:32px}.banner h2{font-size:36px}.hero{padding-top:40px;gap:36px}
-  .grid,.grid.two{grid-template-columns:1fr}
+.js .reveal{opacity:0;transform:translateY(14px);transition:opacity .5s,transform .5s}
+.js .reveal.in{opacity:1;transform:none}
+@media (prefers-reduced-motion: reduce){
+  html{scroll-behavior:auto}
+  .js .reveal{opacity:1;transform:none;transition:none}
+  .card{transition:none}.card:hover{transform:none}
+}
+@media (max-width:860px){
+  h1{font-size:42px}h2{font-size:32px}.banner h2{font-size:36px}.hero{padding-top:36px;gap:32px}
+  .grid,.build{grid-template-columns:1fr}
+  .nav nav{order:3;width:100%;overflow-x:auto;flex-wrap:nowrap}
+  .crow .nm{flex-basis:100%}
 }
 </style>
 </head>
 <body>
-<header class="wrap nav">
-  <a class="logo" href="#top">shus</a>
-  <nav aria-label="Main"><a href="#features">Features</a><a href="#commands">Commands</a><a href="#setup">Setup</a></nav>
-  <!-- TO CHANGE THE INVITE LINK: replace YOUR_CLIENT_ID in every "oauth2/authorize" link on this page with your bot's Application ID -->
-  <a class="btn btn-pink" href="https://discord.com/oauth2/authorize?client_id=YOUR_CLIENT_ID&permissions=1099917782102&scope=bot%20applications.commands">Add to Discord</a>
-</header>
+<div class="bar">
+  <div class="wrap nav">
+    <a class="logo" href="#top">shus</a>
+    <nav aria-label="Main"><a href="#features" data-nav>Features</a><a href="#explore" data-nav>Commands</a><a href="#setup" data-nav>Setup</a></nav>
+    <div class="tools">
+      <button class="icon-btn" id="theme" type="button" aria-label="Switch between light and dark">◐</button>
+      <!-- TO CHANGE THE INVITE LINK: replace YOUR_CLIENT_ID in every "oauth2/authorize" link on this page with your bot's Application ID -->
+      <a class="btn btn-pink" href="https://discord.com/oauth2/authorize?client_id=YOUR_CLIENT_ID&permissions=1099917782102&scope=bot%20applications.commands">Add to Discord</a>
+    </div>
+  </div>
+</div>
 
 <main id="top">
   <section class="wrap hero">
     <div class="hero-text">
       <p class="label">Moderation, community and music</p>
       <h1>One bot for your whole server. <em>Your prefix, your rules.</em></h1>
-      <p class="lead">Shus handles moderation, auto-mod, logging, levels, giveaways, music and more. Every command works with a prefix you choose, and as a slash command too.</p>
+      <p class="lead">Moderation, auto-mod, jail, levels, giveaways, booster roles and music in one bot. Pick a prefix below and watch every example on this page change.</p>
+      <div class="picker" role="group" aria-label="Pick a prefix">
+        <strong>Pick your prefix</strong>
+        <div class="row" id="presets"></div>
+        <div class="row"><label for="custom" class="hint">Or type your own (1–3 characters):</label><input id="custom" class="pin" maxlength="3" autocomplete="off" aria-label="Custom prefix" placeholder="e.g. s!"></div>
+        <p class="hint">Slash commands always work too. Prefix-only commands keep using your last prefix.</p>
+      </div>
       <div class="actions">
         <a class="btn btn-pink btn-lg" href="https://discord.com/oauth2/authorize?client_id=YOUR_CLIENT_ID&permissions=1099917782102&scope=bot%20applications.commands">Add Shus to your server</a>
-        <a class="btn btn-outline btn-lg" href="#commands">See the commands</a>
+        <a class="btn btn-outline btn-lg" href="#explore">Explore the commands</a>
       </div>
-      <div class="facts"><span><b>92</b> slash commands</span><span><b>Custom</b> prefix per server</span><span><b>No</b> AI</span></div>
+      <div class="stats">
+        <div class="stat"><b data-count="92">92</b><span>slash commands</span></div>
+        <div class="stat"><b data-count="12">12</b><span>command categories</span></div>
+        <div class="stat"><b>No AI</b><span>just reliable commands</span></div>
+      </div>
     </div>
-    <div class="mock" aria-label="Example of Shus in a chat">
-      <div><span class="who">Sam</span><p><code>!warn @Alex spamming links</code></p></div>
-      <div><span class="who pink">shus</span>
-        <div class="embed"><b>Warned | Case #12</b><span>Alex (ID 1234567890)</span><span>Reason: spamming links</span><span>Total warnings: 2</span></div>
-      </div>
-      <div><span class="who">Sam</span><p><code>/settings prefix ?</code></p></div>
-      <div><span class="who pink">shus</span>
-        <div class="embed"><b>Prefix changed to ?</b><span>Slash commands always work too.</span></div>
-      </div>
-      <p style="font-size:13px;color:var(--muted)">Example conversation</p>
+
+    <div class="win" aria-label="Try a command">
+      <div class="win-head"><span># general</span><span>try it</span></div>
+      <div class="log" id="log" aria-live="polite"></div>
+      <div class="chips" id="chips"></div>
+      <form class="say" id="say" autocomplete="off">
+        <input id="cmd" aria-label="Type a command" placeholder="Type a command, e.g. warn @Alex spam">
+        <button type="submit">Send</button>
+      </form>
+      <p class="sim">Simulated replies for illustration. Nothing is sent anywhere.</p>
     </div>
   </section>
 
-  <section class="wrap block" id="features">
+  <section class="wrap block reveal" id="features">
     <h2>Everything your server needs</h2>
     <p class="sub">Turn on only what you want. Everything else stays out of the way.</p>
     <div class="grid">
       <article class="card"><span class="tag">Moderation</span><h3>Real mod tools</h3><p>Warn, kick, ban, timeout, purge, lock and more. Every action checks roles and permissions and is saved as a numbered case.</p></article>
       <article class="card"><span class="tag">Protection</span><h3>Auto-mod</h3><p>Filters for blocked words, links, invites, spam, caps and mass mentions, with exempt roles. GIF links stay allowed.</p></article>
-      <article class="card"><span class="tag">Logs</span><h3>See what happened</h3><p>Deleted and edited messages, joins, leaves, role and channel changes, voice activity and mod actions, each switchable.</p></article>
-      <article class="card"><span class="tag">Onboarding</span><h3>Welcome and autoroles</h3><p>Custom welcome and goodbye messages with variables, plus separate autoroles for humans and bots.</p></article>
-      <article class="card"><span class="tag">Roles</span><h3>Reaction roles and suggestions</h3><p>Let members pick roles with reactions, and collect numbered suggestions with voting and staff replies.</p></article>
-      <article class="card"><span class="tag">Community</span><h3>Levels and starboard</h3><p>XP for chatting, leaderboards, reward roles with configurable XP, and a starboard for the best messages.</p></article>
-      <article class="card"><span class="tag">Events</span><h3>Giveaways and polls</h3><p>Giveaways with an Enter button that keep running after restarts, plus polls, reminders and timers.</p></article>
-      <article class="card"><span class="tag">Voice</span><h3>Music</h3><p>Play links or searches with a queue, loop, shuffle and volume controls.</p></article>
-      <article class="card"><span class="tag">Extras</span><h3>Weather and more</h3><p>Weather for any city, Twitch, YouTube, Spotify and Last.fm lookups, plus fun commands like 8ball, ship and dice.</p></article>
+      <article class="card"><span class="tag">Discipline</span><h3>Jail and mutes</h3><p>Jail hides every channel but one and restores roles on release. Separate text, reaction and image mutes.</p></article>
+      <article class="card"><span class="tag">Teams</span><h3>Staff and DJ roles</h3><p>Let a staff role use the everyday mod commands without extra permissions, and give music control to a DJ role.</p></article>
+      <article class="card"><span class="tag">Logs</span><h3>See what happened</h3><p>Messages, joins, roles, channels, voice and mod actions, each switchable, with optional mod log and join log channels.</p></article>
+      <article class="card"><span class="tag">Onboarding</span><h3>Welcome and autoroles</h3><p>Custom welcome and goodbye messages, autoroles for humans and bots, and an automatic nickname for new members.</p></article>
+      <article class="card"><span class="tag">Roles</span><h3>Reaction and booster roles</h3><p>Reaction roles, plus booster roles with colors, gradients, icons, sharing and a color picked from your avatar.</p></article>
+      <article class="card"><span class="tag">Community</span><h3>Levels, giveaways, starboard</h3><p>XP and reward roles, giveaways that survive restarts, suggestions with voting, and a starboard.</p></article>
+      <article class="card"><span class="tag">Voice</span><h3>Music</h3><p>Play links or searches with a queue, loop, shuffle, volume, a DJ role and optional auto play.</p></article>
     </div>
   </section>
 
-  <section class="wrap block" id="commands">
-    <h2>All commands</h2>
-    <p class="sub">Use them with your prefix, like <code>!ban</code>, or as slash commands, like <code>/ban</code>.</p>
-    <div class="grid two">
-      <article class="card cmd"><h3>General</h3><div class="pills"><code>help</code><code>ping</code><code>about</code><code>botinfo</code><code>invite</code><code>support</code><code>userinfo</code><code>avatar</code><code>banner</code><code>serverinfo</code><code>roleinfo</code><code>channelinfo</code><code>membercount</code><code>firstmessage</code><code>permissions</code></div></article>
-      <article class="card cmd"><h3>Moderation</h3><div class="pills"><code>warn</code><code>warnings</code><code>clearwarns</code><code>kick</code><code>ban</code><code>unban</code><code>timeout</code><code>untimeout</code><code>purge</code><code>slowmode</code><code>lock</code><code>unlock</code><code>nickname</code><code>role add</code><code>role remove</code><code>massrole</code><code>modlogs</code></div></article>
-      <article class="card cmd"><h3>Auto-mod</h3><div class="pills"><code>automod enable</code><code>automod disable</code><code>filter add</code><code>filter remove</code><code>filter list</code><code>filter links</code><code>filter invites</code><code>filter spam</code><code>filter caps</code><code>filter mentions</code><code>filter exempt</code></div></article>
-      <article class="card cmd"><h3>Server setup</h3><div class="pills"><code>welcome</code><code>goodbye</code><code>logs</code><code>autorole</code><code>reactionrole</code><code>suggest</code><code>suggestions</code></div></article>
-      <article class="card cmd"><h3>Community</h3><div class="pills"><code>giveaway</code><code>rank</code><code>leaderboard</code><code>levels</code><code>starboard</code></div></article>
-      <article class="card cmd"><h3>Utility</h3><div class="pills"><code>poll</code><code>embed</code><code>say</code><code>announce</code><code>remind</code><code>timer</code><code>afk</code><code>snipe</code><code>editsnipe</code><code>calculate</code><code>choose</code><code>random</code><code>servericon</code><code>serverbanner</code><code>boosters</code><code>boostcount</code><code>rolelist</code></div></article>
-      <article class="card cmd"><h3>Fun</h3><div class="pills"><code>8ball</code><code>coinflip</code><code>dice</code><code>joke</code><code>meme</code><code>ship</code><code>howgay</code><code>cat</code><code>dog</code><code>rate</code></div></article>
-      <article class="card cmd"><h3>Music</h3><div class="pills"><code>play</code><code>pause</code><code>resume</code><code>skip</code><code>stop</code><code>queue</code><code>nowplaying</code><code>volume</code><code>shuffle</code><code>loop</code><code>remove</code><code>clearqueue</code></div></article>
-      <article class="card cmd"><h3>Integrations</h3><div class="pills"><code>weather</code><code>twitch</code><code>youtube</code><code>spotify</code><code>lastfm</code></div></article>
-      <article class="card cmd"><h3>Settings</h3><div class="pills"><code>settings</code><code>settings prefix</code><code>settings timezone</code><code>command</code><code>alias</code></div></article>
+  <section class="wrap block reveal" id="explore">
+    <h2>Explore the commands</h2>
+    <p class="sub">Search, filter by category, and press Copy. Examples use the prefix you picked.</p>
+    <div class="tools-row">
+      <input class="search" id="search" type="search" aria-label="Search commands" placeholder="Search commands, e.g. jail, music, role">
+      <span class="count" id="count" aria-live="polite"></span>
+    </div>
+    <div class="cats" id="cats" role="group" aria-label="Command categories"></div>
+    <div class="list" id="list"></div>
+    <noscript><p class="empty">Turn on JavaScript to search the command list.</p></noscript>
+  </section>
+
+  <section class="wrap block reveal" id="setup">
+    <h2>Build your setup</h2>
+    <p class="sub">Tick what you want and get the exact commands to run, in order.</p>
+    <div class="build">
+      <div class="opts" id="opts"></div>
+      <div class="steps" id="steps" aria-live="polite"></div>
     </div>
   </section>
 
-  <section class="wrap block" id="setup">
-    <h2>Set up in minutes</h2>
-    <div class="grid" style="margin-top:32px">
-      <article class="card"><span class="num">1</span><h3>Add it</h3><p>Invite Shus with one click and put its role above the roles it should manage.</p></article>
-      <article class="card"><span class="num">2</span><h3>Pick your prefix</h3><p>Run /settings prefix to choose one. Slash commands always work too.</p></article>
-      <article class="card"><span class="num">3</span><h3>Turn on what you need</h3><p>Try /automod enable, /logs channel and /levels enable. /settings shows what is set.</p></article>
-    </div>
-  </section>
-
-  <section class="wrap">
+  <section class="wrap reveal">
     <div class="banner">
       <h2>Ready when you are.</h2>
       <p>Add Shus to your server and have it set up in a few minutes.</p>
@@ -173,5 +256,231 @@ h3{margin:0 0 8px;font-size:22px;font-weight:500}
   </section>
 </main>
 <footer class="wrap foot"><span>shus</span><span>Not affiliated with Discord.</span></footer>
+
+<script>
+(function(){
+  "use strict";
+  var $=function(s,r){return (r||document).querySelector(s)};
+  var $$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
+  function el(tag,cls,text){var e=document.createElement(tag);if(cls)e.className=cls;if(text!==undefined)e.textContent=text;return e}
+  var reduce=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* ---------- prefix state ---------- */
+  var P="!",lastPrefix="!";
+  var PRESETS=["!","?",",",".","$","/"];
+  var subs=[];
+  function setPrefix(p){
+    p=String(p||"").trim();
+    if(!p||p.length>3||/\s/.test(p))return false;
+    P=p;if(p!=="/")lastPrefix=p;
+    $$(".pfx").forEach(function(n){n.textContent=P});
+    $$("#presets .pbtn").forEach(function(b){b.setAttribute("aria-pressed",b.getAttribute("data-p")===P?"true":"false")});
+    subs.forEach(function(f){f()});
+    return true;
+  }
+  var presets=$("#presets");
+  PRESETS.forEach(function(p){
+    var b=el("button","pbtn",p==="/"?"/ slash":p);b.type="button";b.setAttribute("data-p",p);b.setAttribute("aria-pressed","false");
+    b.addEventListener("click",function(){var c=$("#custom");c.value="";setPrefix(p)});presets.appendChild(b);
+  });
+  $("#custom").addEventListener("input",function(e){if(e.target.value.trim())setPrefix(e.target.value)});
+
+  /* ---------- command data: [name, category, description, prefixOnly] ---------- */
+  var C=[
+   ["help","General","Show all commands, or details about one",0],["ping","General","Bot latency",0],["about","General","About the bot",0],["botinfo","General","Uptime, servers and statistics",0],
+   ["invite","General","Get the invite link",0],["support","General","Get the support server link",0],["userinfo","General","Information about a member",0],["avatar","General","Show an avatar",0],["banner","General","Show a profile banner",0],
+   ["serverinfo","General","Information about the server",0],["roleinfo","General","Information about a role",0],["channelinfo","General","Information about a channel",0],["membercount","General","Members, humans and bots",0],
+   ["firstmessage","General","Link the first message in a channel",0],["permissions","General","A member's server permissions",0],
+   ["warn <user> <reason>","Moderation","Warn a member (reason required)",0],["warnings <user>","Moderation","View a member's warnings",0],["clearwarns <user>","Moderation","Clear a member's warnings",0],
+   ["kick <user> [reason]","Moderation","Kick a member",0],["ban <user> [reason]","Moderation","Ban a user, even if they left",0],["unban <id> [reason]","Moderation","Unban by user ID",0],
+   ["timeout <user> <10m> [reason]","Moderation","Timeout a member",0],["untimeout <user>","Moderation","Remove a timeout",0],["purge <amount> [user]","Moderation","Delete recent messages",0],
+   ["slowmode <seconds>","Moderation","Set channel slowmode",0],["lock / unlock","Moderation","Stop or allow @everyone sending in a channel",0],["nickname <user> [name]","Moderation","Change or reset a nickname",0],
+   ["role add / remove <user> <role>","Moderation","Give or take a role",0],["massrole <role>","Moderation","Give a role to many members, with confirmation",0],["modlogs [user]","Moderation","View recorded cases",0],
+   ["jail <user> [reason]","Jail & mutes","Jail a member: roles removed, only the jail channel visible",1],["unjail <user>","Jail & mutes","Release a member and restore their roles",1],["jaillog [user]","Jail & mutes","Recent jail cases",1],
+   ["mute / unmute <user>","Jail & mutes","Text mute with the muted role",1],["rmute / runmute <user>","Jail & mutes","Reaction mute",1],["imute / iunmute <user>","Jail & mutes","Image and file mute",1],
+   ["automod enable / disable","Auto-mod","Turn automatic moderation on or off",0],["filter add / remove / list","Auto-mod","Blocked words (whole words only)",0],
+   ["filter links / invites / spam / caps <on|off>","Auto-mod","Switch each filter",0],["filter mentions <limit>","Auto-mod","Mention limit per message",0],["filter exempt add / remove / list","Auto-mod","Roles the filters ignore",0],
+   ["welcome set / channel / test / disable / variables","Server","Welcome messages",0],["goodbye set / channel / test / disable / variables","Server","Goodbye messages",0],
+   ["logs channel / enable / disable / <type>","Server","Logging, with a switch for each log type",0],["autorole add / remove / list / bots / humans / reset","Server","Roles for new members",0],
+   ["reactionrole create / add / remove / list / delete","Server","Reaction roles",0],["suggest <idea>","Server","Make a suggestion (staff: approve, deny, consider, reply)",0],["suggestions","Server","List recent suggestions",0],
+   ["giveaway start / end / reroll / cancel / list / edit","Community","Giveaways that survive restarts",0],["rank [user]","Community","Level and XP",0],["leaderboard","Community","Top members",0],
+   ["levels enable / disable / setxp / reset / rewards / config","Community","Leveling",0],["levels reward add / remove, levels ignore add / remove","Community","Reward roles and ignored channels",0],
+   ["starboard channel / threshold / emoji / enable / disable","Community","Starboard",0],
+   ["poll <question> <a | b>","Utility","Create a poll (poll end for results)",0],["embed / embed builder","Utility","Post an embed, or use a form",0],["say / announce","Utility","Send a message or an announcement",0],
+   ["remind <10m> <text>","Utility","Reminder that survives restarts",0],["timer <5m>","Utility","Start a timer",0],["afk [reason]","Utility","Set yourself as away",0],["snipe / editsnipe","Utility","Last deleted or edited message",0],
+   ["calculate <maths>","Utility","Do some maths",0],["choose <a | b>","Utility","Pick an option",0],["random [min] [max]","Utility","Pick a number",0],["servericon / serverbanner","Utility","Show the server's images",0],
+   ["boosters / boostcount","Utility","Boost information",0],["rolelist","Utility","List the server's roles",0],["quote [message link]","Utility","Quote a message (reply to it, or give a link)",1],
+   ["8ball <question>","Fun","Ask the magic 8-ball",0],["coinflip","Fun","Flip a coin",0],["dice [sides]","Fun","Roll a die",0],["joke","Fun","Hear a joke",0],["meme","Fun","A random meme",0],
+   ["ship <user> [user]","Fun","Lighthearted compatibility meter",0],["howgay [user]","Fun","A lighthearted, random rainbow meter",0],["rate <thing>","Fun","Rate something out of 10",0],["cat / dog","Fun","A random picture",0],
+   ["play <link or search>","Music","Play a song",0],["pause / resume","Music","Pause or continue",0],["skip / stop","Music","Skip a song, or stop and leave",0],["queue / nowplaying","Music","See what is playing and next",0],
+   ["volume / shuffle / loop","Music","Volume, shuffle and loop modes",0],["remove <n> / clearqueue","Music","Tidy the queue",0],
+   ["weather <city>","Integrations","Weather for a place (no key needed)",0],["twitch / youtube / spotify / lastfm","Integrations","Lookups (need free API keys set by the bot owner)",0],
+   ["settings prefix <new>","Settings","Change the prefix",0],["settings view / timezone / permissions / ignored / ignore / reset","Settings","Server settings",0],["command enable / disable / list","Settings","Turn commands on or off",0],
+   ["alias add / remove / list","Settings","Your own prefix shortcuts",0],
+   ["settings staff <roles>","Settings","Staff roles can use the everyday mod commands",1],["settings dj <role>","Settings","Only DJs control the music",1],["settings autoplay <on|off>","Settings","Keep playing when the queue ends",1],
+   ["settings modlog / joinlogs <channel>","Settings","Dedicated punishment and join/leave log channels",1],["settings autonick <template>","Settings","Nickname for new members",1],
+   ["settings jailrole / jail / jailroles / jailmsg / resetcases","Settings","Set up the jail",1],["settings muted / rmuted / imuted <role>","Settings","Set up the mute roles",1],
+   ["settings premiumrole / baserole <role>","Settings","Premium members and the booster base role",1],["settings config","Settings","See all of the above",1],
+   ["boosterrole <color> [color2] <name>","Booster roles","Create or update your booster role",1],["boosterrole color / random / rename / icon / dominant","Booster roles","Change your role (dominant = color from your avatar)",1],
+   ["boosterrole share <user>","Booster roles","Share your role (share max / limit / list / remove)",1],["boosterrole list / remove / link / limit / base / cleanup","Booster roles","Manage booster roles",1],
+   ["boosterrole award / filter","Booster roles","Boost reward role and blocked name words",1]
+  ];
+  var CATS=["All","General","Moderation","Jail & mutes","Auto-mod","Server","Community","Utility","Fun","Music","Integrations","Settings","Booster roles"];
+
+  /* ---------- copy helper ---------- */
+  function copyText(text,btn){
+    function done(){var old=btn.textContent;btn.textContent="Copied";btn.classList.add("done");setTimeout(function(){btn.textContent=old;btn.classList.remove("done")},1200)}
+    function fallback(){try{var t=document.createElement("textarea");t.value=text;t.setAttribute("readonly","");t.style.position="fixed";t.style.opacity="0";document.body.appendChild(t);t.select();document.execCommand("copy");document.body.removeChild(t);done()}catch(e){btn.textContent="Press Ctrl+C"}}
+    try{if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text).then(done,fallback)}else{fallback()}}catch(e){fallback()}
+  }
+  function pfxFor(entry){return (P==="/"&&entry[3])?lastPrefix:P}
+
+  /* ---------- command explorer ---------- */
+  var cat="All",q="";
+  var catsBox=$("#cats"),listBox=$("#list"),countBox=$("#count");
+  CATS.forEach(function(c){var b=el("button","cat",c);b.type="button";b.setAttribute("aria-pressed",c==="All"?"true":"false");b.addEventListener("click",function(){cat=c;$$(".cat").forEach(function(x){x.setAttribute("aria-pressed",x===b?"true":"false")});renderList()});catsBox.appendChild(b)});
+  function renderList(){
+    listBox.textContent="";
+    var needle=q.trim().toLowerCase(),shown=0;
+    C.forEach(function(e){
+      if(cat!=="All"&&e[1]!==cat)return;
+      if(needle&&(e[0]+" "+e[1]+" "+e[2]).toLowerCase().indexOf(needle)<0)return;
+      shown++;
+      var p=pfxFor(e),row=el("div","crow");
+      var shownName=(P==="/"&&!e[3]?"/":p)+e[0];
+      row.appendChild(el("code","nm",shownName));
+      var ds=el("span","ds",e[2]);row.appendChild(ds);
+      if(e[3])row.appendChild(el("span","badge","prefix only"));
+      var cb=el("button","copy","Copy");cb.type="button";cb.setAttribute("aria-label","Copy "+shownName);
+      var base=e[0].split(" / ")[0].split(" <")[0].split(" [")[0];
+      cb.addEventListener("click",function(){copyText((P==="/"&&!e[3]?"/":p)+base,cb)});row.appendChild(cb);
+      listBox.appendChild(row);
+    });
+    if(!shown)listBox.appendChild(el("div","empty","No commands match. Try a shorter search."));
+    countBox.textContent="Showing "+shown+" of "+C.length;
+  }
+  $("#search").addEventListener("input",function(e){q=e.target.value;renderList()});
+  subs.push(renderList);
+
+  /* ---------- simulated chat ---------- */
+  var log=$("#log");
+  function addUser(text){var m=el("div","m");m.appendChild(el("span","who","You"));var p=el("p");p.appendChild(el("code","",text));m.appendChild(p);log.appendChild(m);scroll()}
+  function scroll(){log.scrollTop=log.scrollHeight}
+  function addBot(title,lines,bad){
+    var m=el("div","m");m.appendChild(el("span","who bot","shus"));
+    var e=el("div","emb"+(bad?" bad":""));e.appendChild(el("b","",title));(lines||[]).forEach(function(l){e.appendChild(el("span","",l))});
+    m.appendChild(e);log.appendChild(m);scroll();
+  }
+  var BALL=["Yes, definitely.","Signs point to yes.","Ask again later.","Don't count on it.","Very doubtful.","It is certain."];
+  function pick(a){return a[Math.floor(Math.random()*a.length)]}
+  function mention(t){return t||"@Alex"}
+  var DEMO={
+    help:function(){return["Shus commands",["Use "+P+"help <command> for details.","General, Moderation, Auto-mod, Community, Music and more."]]},
+    ping:function(){return["Pong.",["42ms (example)"]]},
+    warn:function(a){var t=a[0],r=a.slice(1).join(" ");if(!t||!r)return["Missing "+(t?"reason":"user"),["Usage: "+P+"warn <user> <reason>"],1];return["Warned | Case #12",[t,"Reason: "+r,"Total warnings: 2"]]},
+    kick:function(a){return["Kicked | Case #13",[mention(a[0]),"Reason: "+(a.slice(1).join(" ")||"No reason provided")]]},
+    ban:function(a){return["Banned | Case #14",[mention(a[0]),"Reason: "+(a.slice(1).join(" ")||"No reason provided")]]},
+    timeout:function(a){return["Timed out | Case #15",[mention(a[0]),"Duration: "+(a[1]||"10m"),"Reason: "+(a.slice(2).join(" ")||"No reason provided")]]},
+    jail:function(a){return["Jailed | Jail case #3 | Case #16",[mention(a[0]),"Reason: "+(a.slice(1).join(" ")||"No reason provided"),"Roles removed: 2"]]},
+    mute:function(a){return["Mute | Case #17",[mention(a[0]),"Reason: "+(a.slice(1).join(" ")||"No reason provided")]]},
+    rank:function(){return["Level 7 | Rank #3",["▰▰▰▰▱▱▱▱▱▱▱▱ 120/460 XP","Total XP: 1,840"]]},
+    giveaway:function(a){if(a[0]!=="start")return["Active giveaways",["#4 Nitro, ends in 1h"]];return["Giveaway #4 started.",["Prize: "+(a.slice(3).join(" ")||"Nitro"),"Ends in "+(a[1]||"1h")+", "+(a[2]||"1")+" winner(s)","Members press the Enter button to join."]]},
+    boosterrole:function(a){var t=a.slice(),n=[];while(t.length&&/^(#?[0-9a-f]{6}|#?[0-9a-f]{3}|red|pink|blue|green|purple|gold|cyan|black|white)$/i.test(t[0])&&n.length<2)n.push(t.shift());return["Your booster role is @"+(t.join(" ")||"You"),[n.length?"Color: "+n[0]+(n[1]?" to "+n[1]:""):"Usage: "+P+"boosterrole <color> [color2] <name>"]]},
+    quote:function(){return["Quote",["“Anyone up for a game tonight?”","Jump to message in #general"]]},
+    play:function(a){var s=a.join(" ")||"a song";return["Now playing",[s+" (example)","Requested by you","Use "+P+"queue to see what's next."]]},
+    weather:function(a){return["Weather in "+(a.join(" ")||"Brussels"),["Light rain, 12°C (54°F)","Feels like 10°C, humidity 80%","Weather data by Open-Meteo.com"]]},
+    poll:function(a){return["Poll created",["1️⃣ "+(a.length?a.join(" ").split("|")[0].trim():"Yes"),"2️⃣ No"]]},
+    "8ball":function(){return["Magic 8-ball",[pick(BALL)]]},
+    coinflip:function(){return["Coin flip",["It's "+pick(["heads","tails"])+"."]]},
+    dice:function(a){var s=parseInt(a[0],10)||6;return["Dice",["You rolled a "+(1+Math.floor(Math.random()*s))+" (d"+s+")."]]},
+    settings:function(a){
+      if(a[0]==="prefix"){var np=a[1];if(np&&setPrefix(np))return["Prefix changed to "+np,["Every example on this page now uses it.","Slash commands always work too."]];return["Missing prefix",["Usage: "+P+"settings prefix <new prefix>"],1]}
+      return["Server settings",["Prefix: "+P,"Timezone: UTC"]]
+    }
+  };
+  function run(raw){
+    raw=raw.trim();if(!raw)return;
+    addUser(raw);
+    var t=raw;if(t.indexOf(P)===0)t=t.slice(P.length);else if(t[0]==="/"||t[0]==="!"||t[0]==="?")t=t.slice(1);
+    var parts=t.trim().split(/\s+/),name=(parts.shift()||"").toLowerCase();
+    var typing=el("div","typing","shus is typing...");log.appendChild(typing);scroll();
+    setTimeout(function(){
+      if(typing.parentNode)typing.parentNode.removeChild(typing);
+      var f=DEMO[name];
+      if(f){var r=f(parts);addBot(r[0],r[1],r[2])}
+      else addBot("Not in this demo",["Try: warn, jail, rank, giveaway, boosterrole, quote, play, weather, 8ball, settings prefix ?","The full list is below."],1);
+    },reduce?0:550);
+  }
+  var QUICK=["warn @Alex spamming links","jail @Alex spam","boosterrole #ff66aa Cool Name","rank","giveaway start 1h 2 Nitro","play lofi beats","weather Brussels","settings prefix ?"];
+  var chips=$("#chips");
+  QUICK.forEach(function(c){var b=el("button","chip");b.type="button";b.addEventListener("click",function(){run(P+c)});chips.appendChild(b);b._text=c;});
+  function labelChips(){$$(".chip").forEach(function(b){b.textContent=(P==="/"?"/":P)+b._text})}
+  subs.push(labelChips);
+  $("#say").addEventListener("submit",function(e){e.preventDefault();var i=$("#cmd");run(i.value);i.value=""});
+  addBot("Welcome to the demo",["Press a button or type a command."]);
+
+  /* ---------- setup builder ---------- */
+  var OPTS=[
+    {id:"logs",t:"Moderation logs",d:"Keep a record of what happens",steps:["logs channel #mod-log","settings modlog #mod-log"]},
+    {id:"automod",t:"Auto-mod",d:"Block spam, invites and bad words",steps:["automod enable","filter invites on","filter spam on","filter add <word>"]},
+    {id:"welcome",t:"Welcome messages",d:"Greet new members",steps:["welcome channel #welcome","welcome set Welcome {user} to {server}!","welcome test"]},
+    {id:"levels",t:"Levels and rewards",d:"XP for chatting, roles as prizes",steps:["levels enable","levels reward add 5 @Active"]},
+    {id:"music",t:"Music with a DJ",d:"Control the queue with a role",steps:["settings dj @DJ","settings autoplay on","play <song or link>"]},
+    {id:"jail",t:"Jail",d:"Isolate a member and restore roles later",steps:["settings jailrole @Jailed","settings jail #jail","jail @user <reason>"]},
+    {id:"boost",t:"Booster roles",d:"Custom colors for boosters",steps:["settings baserole @Boosters","boosterrole #ff66aa My Role"]},
+    {id:"staff",t:"Staff team",d:"Let moderators use the everyday mod commands",steps:["settings staff @Moderator"]}
+  ];
+  var opts=$("#opts"),stepsBox=$("#steps");
+  OPTS.forEach(function(o){
+    var l=el("label","opt"),i=document.createElement("input");i.type="checkbox";i.value=o.id;i.addEventListener("change",renderSteps);
+    var w=el("div");w.appendChild(el("b","",o.t));w.appendChild(el("span","",o.d));l.appendChild(i);l.appendChild(w);opts.appendChild(l);
+  });
+  function renderSteps(){
+    stepsBox.textContent="";
+    var chosen=OPTS.filter(function(o){return $("input[value="+o.id+"]",opts).checked});
+    if(!chosen.length){stepsBox.appendChild(el("p","hint","Tick the features you want on the left. Your commands will appear here."));return}
+    var all=[],n=0;
+    var top=el("div","top");top.appendChild(el("h4","","Run these in order"));
+    var ca=el("button","copy","Copy all");ca.type="button";top.appendChild(ca);stepsBox.appendChild(top);
+    var ol=document.createElement("ol");
+    chosen.forEach(function(o){
+      o.steps.forEach(function(s){
+        n++;var text=(P==="/"?lastPrefix:P)+s;all.push(text);
+        var li=el("li");li.appendChild(el("code","",text));
+        var b=el("button","copy","Copy");b.type="button";b.setAttribute("aria-label","Copy "+text);b.addEventListener("click",function(){copyText(text,b)});li.appendChild(b);ol.appendChild(li);
+      });
+    });
+    ca.addEventListener("click",function(){copyText(all.join("\n"),ca)});
+    stepsBox.appendChild(ol);
+    stepsBox.appendChild(el("p","hint","Replace <angle brackets> and #channels or @roles with your own. Prefix-only commands use your last prefix."));
+  }
+  subs.push(renderSteps);
+
+  /* ---------- theme toggle ---------- */
+  var root=document.documentElement;
+  function systemDark(){return window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches}
+  try{var saved=localStorage.getItem("shus-theme");if(saved==="light"||saved==="dark")root.setAttribute("data-theme",saved)}catch(e){}
+  $("#theme").addEventListener("click",function(){
+    var cur=root.getAttribute("data-theme")||(systemDark()?"dark":"light"),next=cur==="dark"?"light":"dark";
+    root.setAttribute("data-theme",next);try{localStorage.setItem("shus-theme",next)}catch(e){}
+  });
+
+  /* ---------- nav highlight, reveal, count-up ---------- */
+  if("IntersectionObserver" in window){
+    var navLinks=$$("[data-nav]");
+    var secObs=new IntersectionObserver(function(es){es.forEach(function(en){if(en.isIntersecting){navLinks.forEach(function(a){a.classList.toggle("on",a.getAttribute("href")==="#"+en.target.id)})}})},{rootMargin:"-45% 0px -50% 0px"});
+    ["features","explore","setup"].forEach(function(id){var s=document.getElementById(id);if(s)secObs.observe(s)});
+    var revObs=new IntersectionObserver(function(es){es.forEach(function(en){if(en.isIntersecting){en.target.classList.add("in");revObs.unobserve(en.target)}})},{threshold:.08});
+    $$(".reveal").forEach(function(r){revObs.observe(r)});
+  }else{$$(".reveal").forEach(function(r){r.classList.add("in")})}
+  $$("[data-count]").forEach(function(n){
+    var target=parseInt(n.getAttribute("data-count"),10);if(reduce||!target)return;
+    var start=null;function step(t){if(start===null)start=t;var k=Math.min((t-start)/900,1);n.textContent=Math.round(target*(1-Math.pow(1-k,3)));if(k<1)requestAnimationFrame(step)}
+    n.textContent="0";requestAnimationFrame(step);
+  });
+
+  setPrefix("!");
+})();
+</script>
 </body>
 </html>
